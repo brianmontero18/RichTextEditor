@@ -1,14 +1,31 @@
 import React, { Component } from 'react';
 import './ControlPanel.css';
 
+const EditButton = ({ cmd, name }) => {
+    return (
+        <button
+            className="format-action"
+            key={cmd}
+            type="button"
+            onMouseDown={evt => {
+                evt.preventDefault(); // Avoids loosing focus from the editable area
+                console.log(cmd)
+                document.execCommand(cmd, false); // Send the command to the browser
+            }}
+        >
+            <b>{name}</b>
+        </button>
+    );
+}
+
 class ControlPanel extends Component {
     render() {
         return (
             <div id="control-panel">
                 <div id="format-actions">
-                    <button className="format-action" type="button"><b>B</b></button>
-                    <button className="format-action" type="button"><i>I</i></button>
-                    <button className="format-action" type="button"><u>U</u></button>
+                    <EditButton cmd="bold" name='B'/>
+                    <EditButton cmd="italic" name='I'/>
+                    <EditButton cmd="underline" name='U'/>
                 </div>
             </div>
         );
