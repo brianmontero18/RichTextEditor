@@ -1,0 +1,24 @@
+#control-panel {
+    background-color: #fff;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 5px;
+}
+#format-actions {
+    width: 200px;
+    margin-right: 400px;
+}
+#format-actions button {
+    font-size: 12px;
+    font-family: inherit;
+    border: 1px solid #777777;
+    background-color: white;
+    padding: 5px;
+    margin: 0 10px 0 0;
+}
+.highight-menu {
+    background-color: #777777 !important;
+    color: white !important;
+}
