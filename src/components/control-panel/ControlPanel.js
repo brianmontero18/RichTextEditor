@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import classNames from 'classnames';
 import './ControlPanel.css';
 
-const FormatButton = ({ cmd, name, isActive, onMouseDown }) => {
-    //const dale = .includes("<b>")
+const FormatButton = ({ cmd, name, isActive, onClick }) => {
     return (
         <button
             className={classNames({ 'highight-menu': isActive })}
             key={cmd}
             type="button"
-            onMouseDown={onMouseDown}
+            onMouseDown={onClick}
         >
             <b>{name}</b>
         </button>
@@ -18,7 +17,7 @@ const FormatButton = ({ cmd, name, isActive, onMouseDown }) => {
 
 const ControlPanel = ({ selected }) => {
     
-    const onMouseDown = (e, cmd) => {
+    const onClick = (e, cmd) => {
         e.preventDefault();
         document.execCommand(cmd, false);
     };
@@ -26,9 +25,9 @@ const ControlPanel = ({ selected }) => {
     return (
         <div id="control-panel">
             <div id="format-actions">
-                <FormatButton cmd="bold" name='B' isActive={selected} onMouseDown={(e) => onMouseDown(e, 'bold')} />
-                <FormatButton cmd="italic" name='I' isActive={selected} onMouseDown={(e) => onMouseDown(e, 'italic')} />
-                <FormatButton cmd="underline" name='U' isActive={selected} onMouseDown={(e) => onMouseDown(e, 'underline')} />
+                <FormatButton cmd="bold" name='B' isActive={/(.*)<b>(.*?)<\/b>(.*)/.test(selected)} onClick={(e) => onClick(e, 'bold')} />
+                <FormatButton cmd="italic" name='I' isActive={/(.*)<i>(.*?)<\/i>(.*)/.test(selected)} onClick={(e) => onClick(e, 'italic')} />
+                <FormatButton cmd="underline" name='U' isActive={/(.*)<u>(.*?)<\/u>(.*)/.test(selected)} onClick={(e) => onClick(e, 'underline')} />
             </div>
         </div>
     );

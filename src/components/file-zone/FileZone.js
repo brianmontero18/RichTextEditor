@@ -1,15 +1,16 @@
 import React from 'react';
 import './FileZone.css';
 
-const FileZone = ({ handleChange, getSelection }) => {
+const FileZone = ({ getSelection }) => {
     return (
         <div id="file-zone">
             <div id="file" 
                 spellCheck
                 contentEditable
                 suppressContentEditableWarning
-                onInput={handleChange}
+                //onInput={handleChange}
                 onDoubleClick={getSelection}
+                onClick={getSelection}
             >
             </div>
         </div>

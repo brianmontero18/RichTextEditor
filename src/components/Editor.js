@@ -10,7 +10,12 @@ const Editor = () => {
     // };
 
     const getSelection = ({ target }) => {
-        setState({ selected: target.outerHTML })
+        if(target.innerHTML) {
+            const node = window.getSelection().getRangeAt(0).startContainer;
+            const parents = (node) => (node.parentElement ? parents(node.parentElement) : []).concat([node]);
+            console.log(parents(node));
+            setState({ selected: target.outerHTML })
+        }
     };
 
     return (
