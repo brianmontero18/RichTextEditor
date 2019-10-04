@@ -16,7 +16,11 @@ class App extends Component {
                     <span>Simple Text Editor</span>
                 </header>
                 <main>
-                    <Editor />
+                    <Editor formatActions={[
+                        {command: 'bold', displayName: 'B'},
+                        {command: 'italic', displayName: 'I'},
+                        {command: 'underline', displayName: 'U'}
+                    ]}/>
                 </main>
             </div>
         );
