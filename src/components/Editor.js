@@ -1,11 +1,12 @@
 import React, { useReducer } from 'react';
 import ControlPanel from "./control-panel/ControlPanel";
 import FileZone from "./file-zone/FileZone";
-import * as Commands from '../commands';
+import * as Commands from '../utils/commands/index.js';
 
 const setPrivateProps = (defaultProps) => defaultProps.map((props) => ({
     ...props,
-    isActive: false
+    isActive: false,
+    group: Commands[props.command].group
 }));
 
 const getParentsNode = (node, target) => {
@@ -27,28 +28,23 @@ const getFormat = (target, state) => {
 
 const setBasicFormat = (command, state) => {
     document.execCommand(command, false);
-    return state.map((button) => {
-        if(button.command === command) { 
+
+    return state.map((action) => {
+        if(action.command === command && action.group === 'basic') { 
             return {
-                ...button,
-                isActive: !button.isActive
+                ...action,
+                isActive: !action.isActive
             };
         } else {
-            return button;
+            return action;
         }
     });
 };
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case 'setFormat': {
-            if(Commands.bold.name === action.payload.command || Commands.bold.name === action.payload.command || Commands.bold.name === action.payload.command) {
-                return setBasicFormat(action.payload.command, state);
-            } else {
-                return null;
-            }
-            break;
-        }
+        case 'setBasicFormat':
+            return setBasicFormat(action.payload.command, state);
         case 'getFormat':
             return getFormat(action.payload, state);
         default:
@@ -63,7 +59,7 @@ const Editor = ({ formatActions }) => {
         <React.Fragment>
             <ControlPanel
                 formatButtons={formatButtons}
-                onClick={(command) => dispatch({ type: 'setFormat', payload: { command } })}
+                onClick={(command, type) => dispatch({ type, payload: { command } })}
             />
             <FileZone
                 onDoubleClick={({ target }) => dispatch({ type: 'getFormat', payload: { target } })}

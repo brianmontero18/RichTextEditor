@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import './ControlPanel.css';
-import { bold, italic, underline } from '../../commands';
+import { BASIC } from '../../utils/commands/groups';
 
 const FormatButton = ({ name, isActive, onClick }) => {
     return (
@@ -15,11 +15,9 @@ const FormatButton = ({ name, isActive, onClick }) => {
     );
 };
 
-const renderMarkup = (action, onClick) => {
-    switch (action.command) {
-        case bold.name:
-        case italic.name:
-        case underline.name: {
+const renderMarkupByGroup = (action, onClick) => {
+    switch (action.group) {
+        case BASIC:
             return (
                 <FormatButton
                     key={action.command}
@@ -27,12 +25,12 @@ const renderMarkup = (action, onClick) => {
                     isActive={action.isActive}
                     onClick={(e) => {
                         e.preventDefault();
-                        onClick(action.command);
+                        onClick(action.command, 'setBasicFormat');
                     }}
                 />
             );
-        }
-        default: return null
+        default: 
+            return null
     }
 };
 
@@ -40,7 +38,7 @@ const ControlPanel = ({ formatButtons, onClick }) => {
     return (
         <div id="control-panel">
             <div id="format-actions">
-                { formatButtons.map((action) => renderMarkup(action, onClick)) }
+                { formatButtons.map((action) => renderMarkupByGroup(action, onClick)) }
             </div>
         </div>
     );
