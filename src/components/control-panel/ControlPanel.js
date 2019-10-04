@@ -1,33 +1,46 @@
-import React, { useState } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import './ControlPanel.css';
+import { bold, italic, underline } from '../../commands';
 
-const FormatButton = ({ cmd, name, isActive, onClick }) => {
+const FormatButton = ({ name, isActive, onClick }) => {
     return (
         <button
             className={classNames({ 'highight-menu': isActive })}
-            key={cmd}
             type="button"
             onMouseDown={onClick}
         >
             <b>{name}</b>
         </button>
     );
-}
+};
 
-const ControlPanel = ({ selected }) => {
-    
-    const onClick = (e, cmd) => {
-        e.preventDefault();
-        document.execCommand(cmd, false);
-    };
+const renderMarkup = (action, onClick) => {
+    switch (action.command) {
+        case bold.name:
+        case italic.name:
+        case underline.name: {
+            return (
+                <FormatButton
+                    key={action.command}
+                    name={action.displayName}
+                    isActive={action.isActive}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        onClick(action.command);
+                    }}
+                />
+            );
+        }
+        default: return null
+    }
+};
 
+const ControlPanel = ({ formatButtons, onClick }) => {
     return (
         <div id="control-panel">
             <div id="format-actions">
-                <FormatButton cmd="bold" name='B' isActive={/(.*)<b>(.*?)<\/b>(.*)/.test(selected)} onClick={(e) => onClick(e, 'bold')} />
-                <FormatButton cmd="italic" name='I' isActive={/(.*)<i>(.*?)<\/i>(.*)/.test(selected)} onClick={(e) => onClick(e, 'italic')} />
-                <FormatButton cmd="underline" name='U' isActive={/(.*)<u>(.*?)<\/u>(.*)/.test(selected)} onClick={(e) => onClick(e, 'underline')} />
+                { formatButtons.map((action) => renderMarkup(action, onClick)) }
             </div>
         </div>
     );
