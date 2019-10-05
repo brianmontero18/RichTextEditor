@@ -2,11 +2,12 @@ import React, { useReducer } from 'react';
 import ControlPanel from "./control-panel/ControlPanel";
 import FileZone from "./file-zone/FileZone";
 import * as Commands from '../utils/commands/index.js';
+import { useSynonyms } from '../components/synonyms';
 
 const setPrivateProps = (defaultProps) => defaultProps.map((props) => ({
     ...props,
     isActive: false,
-    group: Commands[props.command].group
+    type: Commands[props.command].type
 }));
 
 const getParentsNode = (node, target) => {
@@ -30,7 +31,7 @@ const setBasicFormat = (command, state) => {
     document.execCommand(command, false);
 
     return state.map((action) => {
-        if(action.command === command && action.group === 'basic') { 
+        if(action.command === command && action.type === 'basic') { 
             return {
                 ...action,
                 isActive: !action.isActive
@@ -52,17 +53,50 @@ const reducer = (state, action) => {
     }
 };
 
-const Editor = ({ formatActions }) => {
-    const [formatButtons, dispatch] = useReducer(reducer, setPrivateProps(formatActions));
-    
+const Editor = (props) => {
+    const [formatActions, dispatch] = useReducer(reducer, setPrivateProps(props.formatActions));
+    const [synonyms, getSynonymsByWord] = useSynonyms();
+
+    const onDoubleClick = ({ target }) => {
+        hola = target;
+        setTimeout(function() {   
+            while (hola.value.substr(hola.selectionEnd -1, 1) == " ")  {
+                hola.selectionEnd = hola.selectionEnd - 1;
+            }
+            const wordSelected = window.getSelection().toString().trim();
+
+            getSynonymsByWord(wordSelected);
+            dispatch({ type: 'getFormat', payload: { target } });
+        }, 0);
+        
+    };
+
+    const replaceSelectedText = (event) => {
+        event.preventDefault();
+        var node, range;
+        if (window.getSelection) {
+            node = window.getSelection();
+            if (node.rangeCount) {
+                range = node.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(document.createTextNode(event.target.value));
+            }
+        } else if (document.selection && document.selection.createRange) {
+            range = document.selection.createRange();
+            range.text = event.target.value;
+        }
+    };
+
     return (
         <React.Fragment>
             <ControlPanel
-                formatButtons={formatButtons}
-                onClick={(command, type) => dispatch({ type, payload: { command } })}
+                formatActions={formatActions}
+                onFormat={(command, type) => dispatch({ type, payload: { command } })}
+                synonyms={synonyms}
+                replaceSelectedText={replaceSelectedText}
             />
             <FileZone
-                onDoubleClick={({ target }) => dispatch({ type: 'getFormat', payload: { target } })}
+                onDoubleClick={onDoubleClick}
             />
         </React.Fragment>
     );

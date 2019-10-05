@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import './ControlPanel.css';
-import { BASIC } from '../../utils/commands/groups';
+import { BASIC } from '../../utils/commands/types';
 
 const FormatButton = ({ name, isActive, onClick }) => {
     return (
@@ -15,8 +15,8 @@ const FormatButton = ({ name, isActive, onClick }) => {
     );
 };
 
-const renderMarkupByGroup = (action, onClick) => {
-    switch (action.group) {
+const renderActionByType = (action, onFormat) => {
+    switch (action.type) {
         case BASIC:
             return (
                 <FormatButton
@@ -25,20 +25,26 @@ const renderMarkupByGroup = (action, onClick) => {
                     isActive={action.isActive}
                     onClick={(e) => {
                         e.preventDefault();
-                        onClick(action.command, 'setBasicFormat');
+                        onFormat(action.command, 'setBasicFormat');
                     }}
                 />
             );
+            
         default: 
             return null
     }
 };
 
-const ControlPanel = ({ formatButtons, onClick }) => {
+const ControlPanel = ({ formatActions, onFormat, synonyms=[], replaceSelectedText }) => {
     return (
         <div id="control-panel">
             <div id="format-actions">
-                { formatButtons.map((action) => renderMarkupByGroup(action, onClick)) }
+                { formatActions.map((action) => renderActionByType(action, onFormat)) }
+                <select onChange={replaceSelectedText}>
+                    { synonyms.length > 0 && synonyms.map((word) => (
+                        <option key={word.word} value={word.word}>{word.word}</option>
+                    ))}
+                </select>
             </div>
         </div>
     );
