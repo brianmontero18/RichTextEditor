@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
-import Editor from './components/Editor';
-import { SynonymsProvider, useSynonyms } from './components/synonyms';
+import Editor from './Editor';
 import ControlPanel from "./components/control-panel/ControlPanel";
 import FileZone from "./components/file-zone/FileZone";
+import { SynonymsProvider, useSynonyms } from './components/synonyms';
 
 const formatActions = [
     {command: 'bold', displayName: 'B'},
@@ -38,7 +38,7 @@ const Content = () => {
             )}
         </Editor>
     );
-}
+};
 
 const App = () => {
     return (
@@ -53,6 +53,6 @@ const App = () => {
             </main>
         </div>
     );
-}
+};
 
 export default App;
