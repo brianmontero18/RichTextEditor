@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const SynonymsContext = React.createContext();
 
@@ -13,7 +13,7 @@ const useSynonyms = () => {
 };
 
 const SynonymsProvider = (props) => {
-    const [synonyms, setSynonyms] = useState({});
+    const [synonyms, setSynonyms] = React.useState({});
     const getSynonymsByWord = async (word) => {
         try {
             const data = await fetchData(`https://api.datamuse.com/words?rel_syn=${word}&max=5`);
