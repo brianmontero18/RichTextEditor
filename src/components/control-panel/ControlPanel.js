@@ -3,15 +3,15 @@ import classNames from 'classnames';
 import './ControlPanel.css';
 
 const ControlPanel = ({ getControlPanelProps, commands, getActionProps, replaceSelectedText, synonyms=[] }) => (
-    <div id="control-panel">
-        <div id="format-actions" {...getControlPanelProps()}>
+    <div id='control-panel'>
+        <div id='format-actions' {...getControlPanelProps()}>
             { commands.map((action) => (
                 <button
                     {...getActionProps({
                         key: action.command,
                         action,
                         className: classNames({ 'highight-menu': action.isActive }),
-                        type: "button"
+                        type: 'button'
                     })}
                 >
                     <b>{action.displayName}</b>
