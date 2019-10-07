@@ -1,8 +1,6 @@
-import React, { useReducer } from 'react';
-import ControlPanel from "./control-panel/ControlPanel";
-import FileZone from "./file-zone/FileZone";
+import React from 'react';
 import * as Commands from '../utils/commands/index.js';
-import { useSynonyms } from '../components/synonyms';
+import { BASIC } from '../utils/commands/types';
 
 const setPrivateProps = (defaultProps) => defaultProps.map((props) => ({
     ...props,
@@ -54,23 +52,52 @@ const reducer = (state, action) => {
 };
 
 const Editor = (props) => {
-    const [formatActions, dispatch] = useReducer(reducer, setPrivateProps(props.formatActions));
-    const [synonyms, getSynonymsByWord] = useSynonyms();
+    const [formatActions, dispatch] = React.useReducer(reducer, setPrivateProps(props.formatActions));
+    const [isOpen, setOpen] = React.useState(false);
 
     const onDoubleClick = ({ target }) => {
-        hola = target;
-        setTimeout(function() {   
-            while (hola.value.substr(hola.selectionEnd -1, 1) == " ")  {
-                hola.selectionEnd = hola.selectionEnd - 1;
-            }
+        // hola = target;
+        // setTimeout(function() {   
+        //     while (hola.value.substr(hola.selectionEnd -1, 1) == " ")  {
+        //         hola.selectionEnd = hola.selectionEnd - 1;
+        //     }
             const wordSelected = window.getSelection().toString().trim();
 
-            getSynonymsByWord(wordSelected);
             dispatch({ type: 'getFormat', payload: { target } });
-        }, 0);
+            setOpen(true);
+            props.openControlPanel(wordSelected);
+        // }, 0);
         
     };
-
+    const getControlPanelProps = () => {
+        return {
+            style: { display: isOpen ? 'block' : 'none' },
+            onFocus: () => {
+                setOpen(false);
+            }
+        };
+    };
+    const getActionProps = (props = { action: {} }) => {
+        if(props.action.type === BASIC) {
+            return {
+                onClick: (e) => {
+                    e.preventDefault();
+                    dispatch({ type: 'setBasicFormat', payload: { command: props.action.command } });
+                },
+                ...props
+            } 
+        } else return props;
+    };
+    const getFileZoneProps = (props = {}) => {
+        return {
+            id: "file",
+            spellCheck: true,
+            contentEditable: true,
+            suppressContentEditableWarning: true,
+            onDoubleClick,
+            ...props
+        };
+    };
     const replaceSelectedText = (event) => {
         event.preventDefault();
         var node, range;
@@ -87,19 +114,14 @@ const Editor = (props) => {
         }
     };
 
-    return (
-        <React.Fragment>
-            <ControlPanel
-                formatActions={formatActions}
-                onFormat={(command, type) => dispatch({ type, payload: { command } })}
-                synonyms={synonyms}
-                replaceSelectedText={replaceSelectedText}
-            />
-            <FileZone
-                onDoubleClick={onDoubleClick}
-            />
-        </React.Fragment>
-    );
-};
+    return props.children({
+        getControlPanelProps,
+        getActionProps,
+        getFileZoneProps,
+        replaceSelectedText,
+        commands: formatActions,
+        isOpen
+    });
+}
 
 export default Editor;
