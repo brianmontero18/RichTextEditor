@@ -9,14 +9,12 @@ const Editor = (props) => {
     const fileZoneRef = React.createRef();
 
     const handleDoubleClick = () => {
-        const wordSelected = window.getSelection().toString();
+        openControlPanel();
+    };
 
-        if(wordSelected.includes(' ')) {
-            alert('please select a word without trailing spaces');
-        } else {
-            dispatch({ type: stateChangeTypes.getFormat, payload: fileZoneRef.current });
-            setOpen(true);
-            props.openControlPanel({ wordSelected });
+    const handleKeyDown = (event) => {
+        if(event.ctrlKey && event.keyCode === 32 && event.currentTarget === fileZoneRef.current) {
+            openControlPanel();
         }
     };
 
@@ -25,6 +23,18 @@ const Editor = (props) => {
             setOpen(false);
         }
     }
+
+    const openControlPanel = () => {
+        const wordSelected = window.getSelection().toString();
+
+        if(wordSelected.includes(' ') || wordSelected.includes(String.fromCharCode(160))) {
+            alert('please select a word without trailing spaces');
+        } else {
+            dispatch({ type: stateChangeTypes.getFormat, payload: fileZoneRef.current });
+            setOpen(true);
+            props.openControlPanel({ wordSelected });
+        }
+    };
 
     const replaceSelectedText = (event) => {
         event.preventDefault();
@@ -68,6 +78,7 @@ const Editor = (props) => {
         suppressContentEditableWarning: true,
         onDoubleClick: handleDoubleClick,
         onClick: handleClick,
+        onKeyDown: handleKeyDown,
         ...props
     });
 
